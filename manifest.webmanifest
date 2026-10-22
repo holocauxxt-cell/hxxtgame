@@ -1,0 +1,10 @@
+{
+  "name": "VOIDFALL Mobile Roguelite",
+  "short_name": "VOIDFALL",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#080d12",
+  "theme_color": "#080d12",
+  "icons": []
+}
