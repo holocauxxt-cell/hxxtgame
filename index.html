@@ -20,11 +20,11 @@
 #healthbar{height:100%;width:100%;background:linear-gradient(90deg,#4fe0bd,#c7ffab);transition:width .15s}
 #xpwrap{width:min(240px,35vw);height:4px;background:#20313b;margin-top:6px;border-radius:4px;overflow:hidden}
 #xpbar{height:100%;width:0;background:var(--cyan)}
-.inventory{position:absolute;left:50%;top:76px;transform:translateX(-50%);display:flex;gap:6px;pointer-events:auto;max-width:90vw;z-index:2}.weaponSlot{background:#07131cdd;border:1px solid #4a6874;border-radius:9px;color:#dffaff;padding:7px 9px;font-size:10px;min-width:62px;box-shadow:0 4px 14px #0005}.weaponSlot.active{border-color:var(--cyan);background:#16404bdf;box-shadow:0 0 14px #69e5f533}.parkourBtn{position:absolute;right:145px;bottom:42px;pointer-events:auto;border-radius:50%;width:66px;height:66px;background:#102b36dc;border:1px solid #69e5f5aa;color:#e6fbff;font-weight:900;font-size:11px;box-shadow:0 0 18px #69e5f522}.bottom{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:14px;gap:12px}
+.inventory{position:absolute;left:50%;top:76px;transform:translateX(-50%);display:flex;gap:6px;pointer-events:auto;max-width:90vw;z-index:2}.weaponSlot{background:#07131cdd;border:1px solid #4a6874;border-radius:9px;color:#dffaff;padding:7px 9px;font-size:10px;min-width:62px;box-shadow:0 4px 14px #0005}.weaponSlot.active{border-color:var(--cyan);background:#16404bdf;box-shadow:0 0 14px #69e5f533}.parkourBtn{display:none!important}.bottom{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:14px;gap:12px}
 .hint{font-size:11px;color:#9cb3bd;text-shadow:0 2px 4px #000;max-width:40%;line-height:1.35}
 .controls{display:none;position:absolute;inset:0;pointer-events:none}
 .stick{position:absolute;bottom:24px;width:124px;height:124px;border-radius:50%;background:#b3e8f511;border:1px solid #b3e8f544;pointer-events:auto;touch-action:none}
-#moveStick{left:22px}#aimStick{right:22px}
+#moveStick{left:22px}#aimStick{display:none!important}
 .knob{position:absolute;width:48px;height:48px;left:37px;top:37px;border-radius:50%;background:#8bd8e84a;border:1px solid #b3e8f5aa;box-shadow:0 0 20px #65d9ef20}
 .sticklabel{position:absolute;left:0;right:0;top:-18px;text-align:center;color:#8faeb8;font-size:10px;letter-spacing:.12em}
 .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#101e28c9,#03070bed);padding:18px;z-index:5}
@@ -69,14 +69,14 @@ button{font:inherit;border:0;cursor:pointer;touch-action:manipulation}
   </div>
   <div class="bottom">
     <div class="hint desktop">WASD / стрелки — движение · мышь — прицел и стрельба<br>Собирай энергию. Каждая новая волна опаснее.</div>
-    <div class="hint" id="mobileHint">Левый стик — движение<br>Правый стик — стрельба · ПАРКУР — прыжок</div>
+    <div class="hint" id="mobileHint">Левый джойстик — движение<br>Оружие автоматически атакует ближайших врагов</div>
     <div class="hint" style="text-align:right">СОХРАНЕНИЕ<br><span id="saveStatus">локально</span></div>
   </div>
 </div>
 <div class="inventory" id="inventory" aria-label="Инвентарь оружия"></div><button class="parkourBtn" id="parkourBtn">ПАРКУР<br>⇧</button>
 <div class="controls">
-  <div class="stick" id="moveStick"><div class="sticklabel">MOVE</div><div class="knob"></div></div>
-  <div class="stick" id="aimStick"><div class="sticklabel">AIM / FIRE</div><div class="knob"></div></div>
+  <div class="stick" id="moveStick" aria-label="Джойстик движения"><div class="sticklabel">ДВИЖЕНИЕ</div><div class="knob"></div></div>
+  <div class="stick" id="aimStick" aria-hidden="true"><div class="sticklabel">AIM / FIRE</div><div class="knob"></div></div>
 </div>
 <div id="toast"></div>
 <div class="overlay" id="menu">
@@ -205,8 +205,8 @@ function bindStick(id,kind){const el=$(id),knob=el.querySelector('.knob');let pi
 function moveIt(e){if(pid!==e.pointerId)return;const dx=e.clientX-cx,dy=e.clientY-cy,lim=34,len=Math.hypot(dx,dy)||1,k=Math.min(1,lim/len);knob.style.transform=`translate(${dx*k}px,${dy*k}px)`;if(kind==='move'){move.x=dx/lim;move.y=dy/lim;move.active=true}else{aim.x=dx/lim;aim.y=dy/lim;touchAimActive=Math.hypot(aim.x,aim.y)>.12}}
 function end(e){if(pid!==e.pointerId)return;pid=null;knob.style.transform='';if(kind==='move'){move.x=move.y=0;move.active=false}else{aim.x=aim.y=0;touchAimActive=false}}
 el.addEventListener('pointerdown',e=>{e.preventDefault();pid=e.pointerId;pos(e);el.setPointerCapture(pid);moveIt(e)});el.addEventListener('pointermove',moveIt);el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end)}
-bindStick('moveStick','move');bindStick('aimStick','aim');$('parkourBtn').addEventListener('pointerdown',e=>{e.preventDefault();parkour()});
-addEventListener('keydown',e=>{keys[e.code]=true;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();if(e.code==='Escape'&&running&&!upgrading)paused=!paused;if(/^Digit[1-4]$/.test(e.code)&&player)switchWeapon((player.inventory||[])[Number(e.code.slice(-1))-1]);if(e.code==='Space'){e.preventDefault();parkour()}});
+bindStick('moveStick','move');
+addEventListener('keydown',e=>{keys[e.code]=true;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();if(e.code==='Escape'&&running&&!upgrading)paused=!paused;if(/^Digit[1-4]$/.test(e.code)&&player)switchWeapon((player.inventory||[])[Number(e.code.slice(-1))-1]);if(e.code==='Space'){e.preventDefault();if(running&&!dead&&!upgrading)paused=!paused}});
 addEventListener('keyup',e=>keys[e.code]=false);
 canvas.addEventListener('pointermove',e=>{pointer.x=e.clientX;pointer.y=e.clientY});
 canvas.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')pointer.down=true});
