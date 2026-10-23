@@ -20,4 +20,9 @@ Upload all files in this folder to the repository root, replacing the old files,
 - Inventory: view and switch unlocked weapons / gear.
 - Fire is automatic when an enemy is in weapon range.
 
+## Mobile troubleshooting
+- Open the game in Safari and wait for the first load to finish; an internet connection is needed to load Three.js.
+- If controls or visuals look outdated after an update, close the game tab completely and reopen it.
+- If performance drops, close other heavy browser tabs and try again.
+
 This is a procedural 3D prototype, not a production-quality animation pack: soldier and zombie meshes are assembled from Three.js geometry, and textures are generated in the browser. Test on the target iPhone and tune performance as needed.
