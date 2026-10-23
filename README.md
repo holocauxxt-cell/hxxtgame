@@ -1,22 +1,21 @@
-# VOIDFALL — Three.js prototype
+# VOIDFALL — Three.js v2
 
-A mobile-first isometric 3D roguelite prototype using Three.js and procedural 3D geometry/materials.
+Mobile-first 3D roguelite prototype for GitHub Pages.
 
-## Files
-- `index.html` — UI and page shell
-- `game.js` — Three.js scene, player, enemies, bosses, weapons, loot, dynamic touch joystick
-- `manifest.webmanifest` — install metadata
-- `sw.js` — basic offline cache shell (Three.js itself is loaded from jsDelivr CDN)
+## Added in v2
+- Procedural surface textures for arena panels and cover blocks (generated locally in the browser).
+- Higher camera angle with damped follow/look-at to reduce camera shake.
+- Level-up choice screen: movement speed, weapon range, fire rate, damage, loot magnet and dash cooldown.
+- Dash/parkour burst button and Space on desktop, with a short roll-like body animation.
+- Responsive touch joystick still appears at the exact point of first touch.
+
+## Publish to GitHub Pages
+Upload all files in this folder to the repository root, replacing old files, and commit to `main`. Three.js is loaded from jsDelivr, so the first load requires internet access.
 
 ## Controls
-- Touch or click anywhere on the playfield: the virtual joystick appears at that exact point.
-- Drag from that point to move; release to stop.
-- Auto-aim and auto-fire target enemies inside the active weapon's range.
-- Inventory button pauses the game; weapon button cycles owned weapons.
-- Desktop: click and drag on the playfield, too.
+- Touch/drag anywhere on the play field: dynamic movement joystick.
+- Dash button (or Space on desktop): short burst dodge.
+- Inventory: view and switch unlocked weapons / gear.
+- Fire is automatic when an enemy is in weapon range.
 
-## Publish on GitHub Pages
-Upload all four files to the repository root and commit to `main`. In Settings → Pages, select `main` and `/(root)`. Open the Pages URL in Safari. Internet is required to load Three.js from jsDelivr.
-
-## Notes
-This is a playable prototype, not a finished commercial game. The environment, character, enemies and props are real Three.js 3D meshes with procedural materials. Textures are generated from geometry/materials rather than downloaded image texture packs. Tune enemy counts and effects for older phones if needed.
+This remains a lightweight prototype; test on the target iPhone and tune quality as needed.
