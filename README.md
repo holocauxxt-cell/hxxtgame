@@ -1,21 +1,22 @@
-# VOIDFALL — мобильный браузерный roguelite
+# VOIDFALL — Three.js prototype
 
-## Запуск
-Откройте `index.html` в современном браузере. Для service worker и установки как PWA нужен HTTPS-хостинг (или localhost).
+A mobile-first isometric 3D roguelite prototype using Three.js and procedural 3D geometry/materials.
 
-## Управление
-- Телефон: горизонтальная ориентация; левый виртуальный стик — движение, правый — направление огня.
-- Компьютер: WASD/стрелки — движение; персонаж автоматически стреляет в ближайшего врага. Escape — пауза.
+## Files
+- `index.html` — UI and page shell
+- `game.js` — Three.js scene, player, enemies, bosses, weapons, loot, dynamic touch joystick
+- `manifest.webmanifest` — install metadata
+- `sw.js` — basic offline cache shell (Three.js itself is loaded from jsDelivr CDN)
 
-## Прогресс
-Лучшее время и метапрогресс сохраняются через localStorage в браузере устройства. Это не облачная синхронизация: очистка данных браузера удалит сохранение.
+## Controls
+- Touch or click anywhere on the playfield: the virtual joystick appears at that exact point.
+- Drag from that point to move; release to stop.
+- Auto-aim and auto-fire target enemies inside the active weapon's range.
+- Inventory button pauses the game; weapon button cycles owned weapons.
+- Desktop: click and drag on the playfield, too.
 
-## Публикация бесплатно
-1. Распакуйте ZIP.
-2. Создайте новый репозиторий на GitHub и загрузите `index.html`, `manifest.webmanifest`, `sw.js`, `README.md`.
-3. В GitHub: Settings → Pages → Deploy from a branch → `main` → `/ (root)` → Save.
-4. После публикации откройте выданный URL на телефоне. Для PWA и service worker нужен HTTPS.
-   Альтернативы: Netlify Drop (перетащить распакованную папку на app.netlify.com/drop) или Cloudflare Pages.
+## Publish on GitHub Pages
+Upload all four files to the repository root and commit to `main`. In Settings → Pages, select `main` and `/(root)`. Open the Pages URL in Safari. Internet is required to load Three.js from jsDelivr.
 
-## Технические заметки
-Это лёгкий 2D Canvas-прототип с псевдообъёмной стилизацией, не полноценная 3D-игра. Он не использует внешние библиотеки и ассеты, поэтому запускается быстро и может быть легко расширен. Сенсорное управление рассчитано на горизонтальный экран.
+## Notes
+This is a playable prototype, not a finished commercial game. The environment, character, enemies and props are real Three.js 3D meshes with procedural materials. Textures are generated from geometry/materials rather than downloaded image texture packs. Tune enemy counts and effects for older phones if needed.
