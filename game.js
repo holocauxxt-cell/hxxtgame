@@ -33,7 +33,12 @@ const groundStyles=[makeGroundTexture('concrete'),makeGroundTexture('wasteland')
 let arenaIndex=0;const floor=new THREE.Mesh(new THREE.PlaneGeometry(44,44),mats.floor);floor.rotation.x=-Math.PI/2;floor.position.y=-.09;floor.material.map=groundStyles[0];floor.material.needsUpdate=true;scene.add(floor);
 const grid=new THREE.GridHelper(44,44,0x59604d,0x30372f);grid.position.y=-.065;grid.material.transparent=true;grid.material.opacity=.28;scene.add(grid);
 const tileGeo=new THREE.BoxGeometry(.94,.055,.94);const tiles=new THREE.Group();scene.add(tiles);
-for(let x=-21;x<=21;x++)for(let z=-21;z<=21;z++){if(Math.random()<.14)continue;let m=Math.random()<.5?mats.tileA:mats.tileB;const t=new THREE.Mesh(tileGeo,m);t.position.set(x+.5,-.025,z+.5);tiles.add(t);if(Math.random()<.045){const stripe=new THREE.Mesh(new THREE.BoxGeometry(.48,.012,.025),mats.edge);stripe.position.set(x+.5,.012,z+.5);tiles.add(stripe)}}
+const tileAInstances=[],tileBInstances=[],stripeInstances=[];const tileDummy=new THREE.Object3D();
+for(let x=-21;x<=21;x++)for(let z=-21;z<=21;z++){if(Math.random()<.14)continue;const item={x:x+.5,z:z+.5};(Math.random()<.5?tileAInstances:tileBInstances).push(item);if(Math.random()<.045)stripeInstances.push(item)}
+function addTileInstances(items,geometry,material,makeMatrix){if(!items.length)return;const mesh=new THREE.InstancedMesh(geometry,material,items.length);for(let i=0;i<items.length;i++){makeMatrix(tileDummy,items[i]);tileDummy.updateMatrix();mesh.setMatrixAt(i,tileDummy.matrix)}mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();tiles.add(mesh)}
+addTileInstances(tileAInstances,tileGeo,mats.tileA,(o,p)=>o.position.set(p.x,-.025,p.z));
+addTileInstances(tileBInstances,tileGeo,mats.tileB,(o,p)=>o.position.set(p.x,-.025,p.z));
+const stripeGeo=new THREE.BoxGeometry(.48,.012,.025);addTileInstances(stripeInstances,stripeGeo,mats.edge,(o,p)=>o.position.set(p.x,.012,p.z));
 // arena boundary and 3D cover props
 const obstacles=[];function addBlock(x,z,w=1.5,d=1.5,h=1.2){const g=new THREE.Group();const body=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mats.wall);body.position.y=h/2;g.add(body);const top=new THREE.Mesh(new THREE.BoxGeometry(w+.05,.09,d+.05),mats.wallTop);top.position.y=h+.02;g.add(top);const strip=new THREE.Mesh(new THREE.BoxGeometry(w*.7,.035,.035),mats.edge);strip.position.set(0,h*.72,d/2+.022);g.add(strip);g.position.set(x,0,z);scene.add(g);obstacles.push({x,z,r:Math.max(w,d)*.58});}
 for(const [x,z] of [[-7,-5],[-7,-4],[7,-6],[7,-5],[-8,5],[8,4],[0,-9],[0,9],[-11,0],[11,0]])addBlock(x,z,1.5,1.5,1.1+Math.random()*.6);
