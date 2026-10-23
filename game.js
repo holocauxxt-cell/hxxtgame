@@ -52,6 +52,7 @@ const classCamoMaps=[camoMap,makeCamoTexture(),makeCamoTexture()];
 const skinColors={vanguard:[[0xb8c2a0,0x4b5140,0x303c31],[0x8b7559,0x514335,0x342c25],[0x77816c,0x343e36,0x202923]],scout:[[0x9aab79,0x3d4936,0x51513a],[0x9b8b68,0x51432f,0x373126],[0x6f9990,0x29413e,0x1d2e2c]],medic:[[0xc1c8bd,0x536c68,0x344b4d],[0xb8a88b,0x675744,0x3e4138],[0x9bb8c4,0x3b5967,0x243944]]};
 classCamoMaps[1].needsUpdate=true;classCamoMaps[2].needsUpdate=true;
 const uniformDark=new THREE.MeshStandardMaterial({color:0x29352d,roughness:.9});const vestMat=new THREE.MeshStandardMaterial({color:0x4b5140,roughness:.88});const skinMat=new THREE.MeshStandardMaterial({color:0x8c8a75,roughness:1});const helmetMat=new THREE.MeshStandardMaterial({color:0x303c31,roughness:.8});
+const gearMat=new THREE.MeshStandardMaterial({color:0x343b32,roughness:.82,metalness:.12});const metalMat=new THREE.MeshStandardMaterial({color:0x73796f,roughness:.48,metalness:.62});
 const player=new THREE.Group();scene.add(player);
 const classGear=new THREE.Group();player.add(classGear);
 const armorPad=new THREE.Mesh(new THREE.BoxGeometry(.68,.19,.39),new THREE.MeshStandardMaterial({color:0x4b5140,roughness:.85}));armorPad.position.set(0,1.28,-.015);classGear.add(armorPad);
@@ -71,7 +72,6 @@ const helmet=new THREE.Mesh(new THREE.SphereGeometry(.22,12,8,0,Math.PI*2,0,Math
 const visor=new THREE.Mesh(new THREE.BoxGeometry(.25,.045,.035),new THREE.MeshStandardMaterial({color:0x161d1b,metalness:.35,roughness:.3}));visor.position.set(0,1.53,-.18);player.add(visor);
 const pack=new THREE.Mesh(new THREE.BoxGeometry(.32,.42,.18),uniformDark);pack.position.set(0,1.05,.24);player.add(pack);
 // Extra field gear: pack straps, shoulder armor, knee pads, boots, radio and utility hardware.
-const gearMat=new THREE.MeshStandardMaterial({color:0x343b32,roughness:.82,metalness:.12});const metalMat=new THREE.MeshStandardMaterial({color:0x73796f,roughness:.48,metalness:.62});
 for(const side of [-1,1]){const shoulder=new THREE.Mesh(new THREE.SphereGeometry(.145,10,8),vestMat);shoulder.scale.set(1,.72,1);shoulder.position.set(side*.36,1.25,0);player.add(shoulder);const knee=new THREE.Mesh(new THREE.BoxGeometry(.22,.13,.13),gearMat);knee.position.set(side*.16,.39,-.025);player.add(knee);const boot=new THREE.Mesh(new THREE.BoxGeometry(.18,.13,.29),uniformDark);boot.position.set(side*.16,.09,-.055);player.add(boot);const strap=new THREE.Mesh(new THREE.BoxGeometry(.055,.48,.035),gearMat);strap.position.set(side*.19,1.06,-.207);strap.rotation.z=side*.13;player.add(strap)}
 const radio=new THREE.Mesh(new THREE.BoxGeometry(.13,.2,.09),gearMat);radio.position.set(-.22,1.15,.16);player.add(radio);const radioAntenna=new THREE.Mesh(new THREE.CylinderGeometry(.009,.009,.16,5),metalMat);radioAntenna.position.set(-.25,1.31,.16);player.add(radioAntenna);
 for(let i=0;i<2;i++){const mag=new THREE.Mesh(new THREE.BoxGeometry(.045,.12,.035),metalMat);mag.position.set(.27,1.09+i*.015,-.18);player.add(mag)}
