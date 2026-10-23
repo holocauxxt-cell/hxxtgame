@@ -166,7 +166,7 @@ function animate(now){requestAnimationFrame(animate);const rawFrameMs=last?now-l
   if(now-perfWindowStart>=1000){
    const seconds=(now-perfWindowStart)/1000;
    const fps=perfFrames/seconds,avgMs=perfFrameMs/Math.max(1,perfFrames);
-   perfHud.textContent='VOIDFALL PERF · Safari\\nFPS: '+fps.toFixed(1)+'\\nFrame avg/max: '+avgMs.toFixed(1)+' / '+perfMaxFrameMs.toFixed(1)+' ms\\nDraw calls: '+renderer.info.render.calls+'\\nTriangles: '+renderer.info.render.triangles.toLocaleString()+'\\nEnemies: '+(enemies.length+(boss?1:0))+'\\nPlayer bullets: '+bullets.length+'\\nEnemy bullets: '+enemyShots.length+'\\nLoot: '+loot.length+'\\nMode: '+(paused?'paused/menu':'gameplay');
+   perfHud.textContent='VOIDFALL PERF · Safari\nFPS: '+fps.toFixed(1)+'\nFrame avg/max: '+avgMs.toFixed(1)+' / '+perfMaxFrameMs.toFixed(1)+' ms\nDraw calls: '+renderer.info.render.calls+'\nTriangles: '+renderer.info.render.triangles.toLocaleString()+'\nEnemies: '+(enemies.length+(boss?1:0))+'\nPlayer bullets: '+bullets.length+'\nEnemy bullets: '+enemyShots.length+'\nLoot: '+loot.length+'\nMode: '+(paused?'paused/menu':'gameplay');
    perfWindowStart=now;perfFrames=0;perfFrameMs=0;perfMaxFrameMs=0;
   }
  }
