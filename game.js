@@ -3,7 +3,7 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.m
 const $=id=>document.getElementById(id);
 const scene=new THREE.Scene(); scene.background=new THREE.Color(0x111714); scene.fog=new THREE.Fog(0x111714,22,52);
 const camera=new THREE.PerspectiveCamera(38,innerWidth/innerHeight,.1,120); camera.position.set(0,12,14); camera.lookAt(0,0,0);
-const renderer=new THREE.WebGLRenderer({antialias:false,alpha:false,powerPreference:'high-performance'}); renderer.setPixelRatio(Math.min(devicePixelRatio||1,0.75)); renderer.setSize(innerWidth,innerHeight); renderer.shadowMap.enabled=false; renderer.outputColorSpace=THREE.SRGBColorSpace; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.15; document.body.prepend(renderer.domElement);
+const renderer=new THREE.WebGLRenderer({antialias:false,alpha:false,powerPreference:'high-performance'}); let renderScale=Math.min(devicePixelRatio||1,0.75),slowFrames=0,fastFrames=0; renderer.setPixelRatio(renderScale); renderer.setSize(innerWidth,innerHeight); renderer.shadowMap.enabled=false; renderer.outputColorSpace=THREE.SRGBColorSpace; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.15; document.body.prepend(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xbac3ad,0x191d18,1.65)); const keyLight=new THREE.DirectionalLight(0xd2d0b8,2.0); keyLight.position.set(5,12,6);scene.add(keyLight);const fillLight=new THREE.PointLight(0x7b8767,5,20);fillLight.position.set(-7,4,-5);scene.add(fillLight);
 const mats={floor:new THREE.MeshStandardMaterial({color:0x65727a,roughness:.86,metalness:.22}),tileA:new THREE.MeshStandardMaterial({color:0x71808a,roughness:.75,metalness:.25}),tileB:new THREE.MeshStandardMaterial({color:0x4b5c68,roughness:.8,metalness:.2}),edge:new THREE.MeshStandardMaterial({color:0x247a91,emissive:0x0b5369,emissiveIntensity:1.2,roughness:.4}),wall:new THREE.MeshStandardMaterial({color:0x314657,roughness:.65,metalness:.35}),wallTop:new THREE.MeshStandardMaterial({color:0x5a7a8e,roughness:.5,metalness:.25}),player:new THREE.MeshStandardMaterial({color:0x68725c,metalness:.22,roughness:.68}),enemy:new THREE.MeshStandardMaterial({color:0x666b5b,metalness:.05,roughness:.9}),bullet:new THREE.MeshBasicMaterial({color:0xd7d0a4}),loot:new THREE.MeshStandardMaterial({color:0xaaa47b,emissive:0x282b1d,emissiveIntensity:.35}),boss:new THREE.MeshStandardMaterial({color:0x6d655a,metalness:.15,roughness:.65,emissive:0x28241e,emissiveIntensity:.25})};
 // Procedural PBR-style surface maps: brushed metal, panel seams, rivets and wear.
@@ -159,7 +159,7 @@ if(perfEnabled){
  perfHud.textContent='VOIDFALL PERF · collecting…';
  document.body.appendChild(perfHud);
 }
-function animate(now){requestAnimationFrame(animate);const rawFrameMs=last?now-last:0;const dt=Math.min(rawFrameMs/1000,.033);last=now;update(dt);renderer.render(scene,camera);frameCount++;
+function animate(now){requestAnimationFrame(animate);const rawFrameMs=last?now-last:0;const dt=Math.min(rawFrameMs/1000,.033);last=now;if(!paused){if(rawFrameMs>30){slowFrames++;fastFrames=0}else if(rawFrameMs<19){fastFrames++;slowFrames=0}else{slowFrames=Math.max(0,slowFrames-1);fastFrames=0}if(slowFrames>=18&&renderScale>Math.min(devicePixelRatio||1,0.42)){renderScale=Math.max(Math.min(devicePixelRatio||1,0.42),renderScale-0.08);renderer.setPixelRatio(renderScale);renderer.setSize(innerWidth,innerHeight);slowFrames=0}else if(fastFrames>=240&&renderScale<Math.min(devicePixelRatio||1,0.75)){renderScale=Math.min(Math.min(devicePixelRatio||1,0.75),renderScale+0.04);renderer.setPixelRatio(renderScale);renderer.setSize(innerWidth,innerHeight);fastFrames=0}}update(dt);renderer.render(scene,camera);frameCount++;
  if(perfEnabled){
   perfFrames++;perfFrameMs+=rawFrameMs;perfMaxFrameMs=Math.max(perfMaxFrameMs,rawFrameMs);
   if(!perfWindowStart)perfWindowStart=now;
@@ -172,7 +172,7 @@ function animate(now){requestAnimationFrame(animate);const rawFrameMs=last?now-l
  }
  if(now-lastUiRefresh>120){lastUiRefresh=now;updateUI()}}
 requestAnimationFrame(animate);
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio||1,0.75));renderer.setSize(innerWidth,innerHeight)});
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderScale=Math.min(devicePixelRatio||1,renderScale);renderer.setPixelRatio(renderScale);renderer.setSize(innerWidth,innerHeight)});
 // Ensure mobile browser gestures do not steal gameplay input.
 document.addEventListener('contextmenu',e=>e.preventDefault());document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
 const soldierProfiles={vanguard:{name:'АВАНГАРД',desc:'Броня и стойкость: +25 к максимальному здоровью.',emoji:'🪖',hp:125,speed:1,damage:1},scout:{name:'РАЗВЕДЧИК',desc:'Лёгкое снаряжение: скорость передвижения +15%.',emoji:'🎖️',hp:90,speed:1.15,damage:1},medic:{name:'МЕДИК',desc:'Боевой стимулятор: урон оружия +12%.',emoji:'✚',hp:100,speed:1,damage:1.12}};
