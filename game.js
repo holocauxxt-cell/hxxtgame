@@ -145,7 +145,9 @@ for(const b of [...bullets]){b.mesh.position.addScaledVector(b.dir,b.speed*dt);b
 for(const b of [...enemyShots]){b.mesh.position.addScaledVector(b.dir,b.speed*dt);b.life-=dt;if(b.mesh.position.distanceTo(player.position.clone().add(new THREE.Vector3(0,.8,0)))<.6){hp-=b.damage;scene.remove(b.mesh);enemyShots.splice(enemyShots.indexOf(b),1);continue}if(b.life<=0){scene.remove(b.mesh);enemyShots.splice(enemyShots.indexOf(b),1)}}
 for(const l of [...loot]){l.life-=dt;l.mesh.rotation.y+=dt*1.5;l.mesh.position.y=.42+Math.sin(elapsed*3+l.mesh.position.x)*.12;if(l.mesh.position.distanceTo(player.position)<1.15*Math.pow(1.35,upgrades.magnet)){if(l.type==='scrap')scrap+=3;else{const locked=weapons.find(w=>!w.owned);if(locked){locked.owned=true;message('ПОЛУЧЕНО ОРУЖИЕ: '+locked.name,1800)}else{scrap+=8;message('РЕДКИЙ ЛУТ · +8 ФРАГМЕНТОВ')}}scene.remove(l.mesh);loot.splice(loot.indexOf(l),1);refreshInventory()}else if(l.life<=0){scene.remove(l.mesh);loot.splice(loot.indexOf(l),1)}}
 if(hp<=0){hp=0;gameOver=true;message('ЗАБЕГ ОКОНЧЕН · ОБНОВИ СТРАНИЦУ',999999);paused=true}updateUI();}
-function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.04);last=now;update(dt);renderer.render(scene,camera)}requestAnimationFrame(animate);
+let frameCount=0,lastUiRefresh=0;
+function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.033);last=now;update(dt);renderer.render(scene,camera);frameCount++;if(now-lastUiRefresh>120){lastUiRefresh=now;updateUI()}}
+requestAnimationFrame(animate);
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.15));renderer.setSize(innerWidth,innerHeight)});
 // Ensure mobile browser gestures do not steal gameplay input.
 document.addEventListener('contextmenu',e=>e.preventDefault());document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
