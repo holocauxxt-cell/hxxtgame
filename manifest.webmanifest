@@ -1,12 +1,10 @@
 {
   "name": "VOIDFALL",
   "short_name": "VOIDFALL",
-  "description": "Mobile low-poly roguelite shooter",
   "start_url": "./",
-  "scope": "./",
   "display": "standalone",
+  "background_color": "#080d12",
+  "theme_color": "#080d12",
   "orientation": "landscape",
-  "background_color": "#080b12",
-  "theme_color": "#080b12",
   "icons": []
 }
