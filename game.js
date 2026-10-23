@@ -149,7 +149,28 @@ for(let bi=enemyShots.length-1;bi>=0;bi--){const b=enemyShots[bi];b.mesh.positio
 for(let li=loot.length-1;li>=0;li--){const l=loot[li];l.life-=dt;l.mesh.rotation.y+=dt*1.5;l.mesh.position.y=.42+Math.sin(elapsed*3+l.mesh.position.x)*.12;if(l.mesh.position.distanceTo(player.position)<1.15*Math.pow(1.35,upgrades.magnet)){if(l.type==='scrap')scrap+=3;else{const locked=weapons.find(w=>!w.owned);if(locked){locked.owned=true;message('ПОЛУЧЕНО ОРУЖИЕ: '+locked.name,1800)}else{scrap+=8;message('РЕДКИЙ ЛУТ · +8 ФРАГМЕНТОВ')}}releaseLoot(l);loot.splice(loot.indexOf(l),1);refreshInventory()}else if(l.life<=0){releaseLoot(l);loot.splice(loot.indexOf(l),1)}}
 if(hp<=0){hp=0;gameOver=true;message('ЗАБЕГ ОКОНЧЕН · ОБНОВИ СТРАНИЦУ',999999);paused=true}}
 let frameCount=0,lastUiRefresh=0;
-function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.033);last=now;update(dt);renderer.render(scene,camera);frameCount++;if(now-lastUiRefresh>120){lastUiRefresh=now;updateUI()}}
+// Optional performance HUD: enable with ?perf=1. No gameplay or render settings are changed.
+const perfEnabled=new URLSearchParams(location.search).get('perf')==='1';
+let perfHud=null,perfWindowStart=0,perfFrames=0,perfFrameMs=0,perfMaxFrameMs=0;
+if(perfEnabled){
+ perfHud=document.createElement('pre');
+ perfHud.id='voidfallPerfHud';
+ Object.assign(perfHud.style,{position:'fixed',left:'8px',top:'8px',zIndex:'99999',margin:'0',padding:'8px 10px',background:'rgba(0,0,0,.82)',color:'#a8ffd2',font:'12px/1.45 ui-monospace,monospace',whiteSpace:'pre',pointerEvents:'none',border:'1px solid #426653',borderRadius:'6px'});
+ perfHud.textContent='VOIDFALL PERF · collecting…';
+ document.body.appendChild(perfHud);
+}
+function animate(now){requestAnimationFrame(animate);const rawFrameMs=last?now-last:0;const dt=Math.min(rawFrameMs/1000,.033);last=now;update(dt);renderer.render(scene,camera);frameCount++;
+ if(perfEnabled){
+  perfFrames++;perfFrameMs+=rawFrameMs;perfMaxFrameMs=Math.max(perfMaxFrameMs,rawFrameMs);
+  if(!perfWindowStart)perfWindowStart=now;
+  if(now-perfWindowStart>=1000){
+   const seconds=(now-perfWindowStart)/1000;
+   const fps=perfFrames/seconds,avgMs=perfFrameMs/Math.max(1,perfFrames);
+   perfHud.textContent='VOIDFALL PERF · Safari\\nFPS: '+fps.toFixed(1)+'\\nFrame avg/max: '+avgMs.toFixed(1)+' / '+perfMaxFrameMs.toFixed(1)+' ms\\nDraw calls: '+renderer.info.render.calls+'\\nTriangles: '+renderer.info.render.triangles.toLocaleString()+'\\nEnemies: '+(enemies.length+(boss?1:0))+'\\nPlayer bullets: '+bullets.length+'\\nEnemy bullets: '+enemyShots.length+'\\nLoot: '+loot.length+'\\nMode: '+(paused?'paused/menu':'gameplay');
+   perfWindowStart=now;perfFrames=0;perfFrameMs=0;perfMaxFrameMs=0;
+  }
+ }
+ if(now-lastUiRefresh>120){lastUiRefresh=now;updateUI()}}
 requestAnimationFrame(animate);
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio||1,0.75));renderer.setSize(innerWidth,innerHeight)});
 // Ensure mobile browser gestures do not steal gameplay input.
